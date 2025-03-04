@@ -59,6 +59,8 @@
         <p>Duration: {{ $movie->duration }} minutes</p>
         <p><strong>Name:</strong> {{ $name }}</p>
         <p><strong>Seats Booked:</strong> {{ $seats }}</p>
+        <p><strong>Email:</strong> {{ $email }}</p>
+        <p><strong>Mobile Number:</strong> {{ $mobile }}</p>
 
         <a href="{{ url('/movies') }}" class="button">Back to Movies</a>
     </div>

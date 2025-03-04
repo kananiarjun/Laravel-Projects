@@ -38,6 +38,8 @@ class MovieController extends Controller
         return view('movies.confirmation', [
             'movie' => $movie,
             'name' => $request->name,
+            'email' => $request->email,
+            'mobile' => $request->mobile,
             'seats' => $request->seats,
         ]);
     }
