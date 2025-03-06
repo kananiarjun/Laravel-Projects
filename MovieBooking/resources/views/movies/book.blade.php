@@ -66,13 +66,14 @@
             margin-top: 20px;
         }
         .seat {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             border: 1px solid #ccc;
             background-color: #f0f0f0;
             text-align: center;
-            line-height: 30px;
+            line-height: 40px;
             cursor: pointer;
+            font-size: 14px;
         }
         .seat.selected {
             background-color: #28a745;
@@ -81,6 +82,9 @@
         .seat.booked {
             background-color: #ddd;
             cursor: not-allowed;
+        }
+        .seat:hover {
+            background-color: #dcdcdc;
         }
     </style>
 </head>
@@ -136,25 +140,41 @@
         // Seat Selection Logic
         const seatSelectionContainer = document.getElementById('seatSelection');
         const numSeatsInput = document.getElementById('seats');
+        let selectedSeats = [];
 
         // Function to create seats
         function createSeats() {
-            const numSeats = numSeatsInput.value;
-            seatSelectionContainer.innerHTML = ''; // Clear any previously selected seats
+            const numSeats = parseInt(numSeatsInput.value);
+            seatSelectionContainer.innerHTML = ''; // Clear previous seats
+            selectedSeats = []; // Clear previously selected seats
+
+            // Create 50 seats (can be adjusted as needed)
             for (let i = 1; i <= 50; i++) {
                 const seat = document.createElement('div');
                 seat.classList.add('seat');
                 seat.textContent = i;
 
-                // Prevent booking more than available seats
+                // Prevent booking more than the available number of seats
                 if (i <= numSeats) {
                     seat.addEventListener('click', function() {
                         if (!seat.classList.contains('booked')) {
                             seat.classList.toggle('selected');
+                            const seatNumber = seat.textContent;
+
+                            // Add or remove the seat number from selectedSeats array
+                            if (seat.classList.contains('selected')) {
+                                selectedSeats.push(seatNumber);
+                            } else {
+                                const index = selectedSeats.indexOf(seatNumber);
+                                if (index > -1) {
+                                    selectedSeats.splice(index, 1);
+                                }
+                            }
+                            console.log(selectedSeats);
                         }
                     });
                 } else {
-                    seat.classList.add('booked');
+                    seat.classList.add('booked'); // Mark seats as booked (cannot be selected)
                 }
 
                 seatSelectionContainer.appendChild(seat);
