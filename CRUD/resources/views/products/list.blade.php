@@ -8,7 +8,8 @@
   </head>
   <body>
     <div class="bg-dark py-3">
-        <h3 class="text-white text-center">CRUD Operation</h3>
+        <h1 class="text-white text-center">CRUD Operation</h1>
+        <h6 class="text-white text-center">Developed By Arjun Kanani</h6>
     </div>
     <div class="container">
         <div class="row justify-content-center mt-4">
