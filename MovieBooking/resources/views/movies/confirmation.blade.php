@@ -49,6 +49,7 @@
         }
         .qr-code-container {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             margin-top: 20px;
@@ -69,10 +70,10 @@
         <p>Duration: {{ $movie->duration }} minutes</p>
         <p><strong>Name:</strong> {{ $name }}</p>
         <p><strong>Seats Booked:</strong> {{ $seats }}</p>
+        <p><strong>Seat Numbers:</strong> {{ $seat_numbers }}</p>
         <p><strong>Email:</strong> {{ $email }}</p>
         <p><strong>Mobile Number:</strong> {{ $mobile }}</p>
 
-        <!-- QR Code Container - Centered -->
         <div class="qr-code-container">
             <p><strong>Scan this QR Code for your booking details:</strong></p>
             <div id="qr-code"></div>
@@ -82,50 +83,67 @@
         <button id="generatePDF" class="button">Download Ticket PDF</button>
     </div>
 
-    <!-- Include jsPDF and QR Code libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Libraries at the END of body for guaranteed loading -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
-        // QR Code generation
-        const bookingInfo = `Movie: {{ $movie->title }}\nDirector: {{ $movie->director }}\nDuration: {{ $movie->duration }} minutes\nName: {{ $name }}\nSeats: {{ $seats }}\nEmail: {{ $email }}\nMobile: {{ $mobile }}`;
-        
-        // Generate QR code for booking details
-        const qrCodeElement = document.getElementById('qr-code');
+    document.addEventListener('DOMContentLoaded', function () {
+        // Safely encode Blade variables for use in JS (works in all Laravel versions)
+        const movieTitle = {!! json_encode($movie->title) !!};
+        const director = {!! json_encode($movie->director) !!};
+        const duration = {!! json_encode($movie->duration) !!};
+        const name = {!! json_encode($name) !!};
+        const seats = {!! json_encode($seats) !!};
+        const seatNumbers = {!! json_encode($seat_numbers) !!};
+        const email = {!! json_encode($email) !!};
+        const mobile = {!! json_encode($mobile) !!};
+
+        const bookingInfo =
+            "Movie: " + movieTitle + "\n" +
+            "Director: " + director + "\n" +
+            "Duration: " + duration + " minutes\n" +
+            "Name: " + name + "\n" +
+            "Seats: " + seats + "\n" +
+            "Seat Numbers: " + seatNumbers + "\n" +
+            "Email: " + email + "\n" +
+            "Mobile: " + mobile;
+
+        // Generate QR code
+        const qrCodeElement = document.getElementById("qr-code");
         new QRCode(qrCodeElement, {
             text: bookingInfo,
             width: 128,
             height: 128
         });
 
-        // Generate PDF with QR Code
+        // PDF download
         document.getElementById('generatePDF').addEventListener('click', function () {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            // Add title to PDF
             doc.setFontSize(18);
             doc.text('Confirm Movie Ticket', 20, 20);
-            
-            // Movie details
+
             doc.setFontSize(14);
-            doc.text(`Movie: {{ $movie->title }}`, 20, 40);
-            doc.text(`Director: {{ $movie->director }}`, 20, 50);
-            doc.text(`Duration: {{ $movie->duration }} minutes`, 20, 60);
-           
-            // Customer details
-            doc.text(`Name: {{ $name }}`, 20, 80);
-            doc.text(`Seats Booked: {{ $seats }}`, 20, 90);
-            doc.text(`Email: {{ $email }}`, 20, 100);
-            doc.text(`Mobile Number: {{ $mobile }}`, 20, 110);
+            doc.text("Movie: " + movieTitle, 20, 40);
+            doc.text("Director: " + director, 20, 50);
+            doc.text("Duration: " + duration + " minutes", 20, 60);
+            doc.text("Name: " + name, 20, 80);
+            doc.text("Seats Booked: " + seats, 20, 90);
+            doc.text("Seat Numbers: " + seatNumbers, 20, 100);
+            doc.text("Email: " + email, 20, 110);
+            doc.text("Mobile Number: " + mobile, 20, 120);
 
             // Add QR code to PDF
-            const qrCanvas = document.getElementById('qr-code').getElementsByTagName('canvas')[0];
-            const qrDataURL = qrCanvas.toDataURL(); // Get the QR code as data URL
-            doc.addImage(qrDataURL, 'PNG', 20, 120, 50, 50); // Add QR code to PDF
+            const qrCanvas = document.querySelector('#qr-code canvas');
+            if (qrCanvas) {
+                const qrDataURL = qrCanvas.toDataURL();
+                doc.addImage(qrDataURL, 'PNG', 20, 130, 50, 50);
+            }
 
-            // Save the PDF
             doc.save('booking-confirmation.pdf');
         });
+    });
     </script>
 </body>
 </html>

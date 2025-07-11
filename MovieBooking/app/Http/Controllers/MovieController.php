@@ -14,7 +14,7 @@ class MovieController extends Controller
         return view('movies.index', compact('movies'));
     }
 
-    // Handle movie booking
+    // Show the booking form for a movie
     public function book($id)
     {
         $movie = Movie::find($id);
@@ -26,22 +26,28 @@ class MovieController extends Controller
     {
         $movie = Movie::find($id);
 
-        // Here, you could store the booking data, but for now, we'll just simulate a successful booking
-
-        // Validation (you can add more validation as needed)
+        // Validation (add more as needed)
         $request->validate([
             'name' => 'required|string|max:255',
             'seats' => 'required|integer|min:1',
+            'selected_seats' => 'required|string', // Ensure seat numbers are present
+            'email' => 'required|email',
+            'mobile' => 'required|string'
         ]);
 
-        // For simplicity, we'll just pass the data to the confirmation view
+        // Parse the seat numbers (if you want to use as array)
+        $seatNumbersString = $request->input('selected_seats'); // e.g., "A1,B2,C3"
+        $seatNumbersArray = array_map('trim', explode(',', $seatNumbersString));
+
+        // Pass everything to the confirmation view
         return view('movies.confirmation', [
-            'movie' => $movie,
-            'name' => $request->name,
-            'email' => $request->email,
-            'mobile' => $request->mobile,
-            'seats' => $request->seats,
+            'movie'        => $movie,
+            'name'         => $request->name,
+            'email'        => $request->email,
+            'mobile'       => $request->mobile,
+            'seats'        => $request->seats,
+            'seat_numbers' => $seatNumbersString, // as string for display
+            // 'seat_numbers_array' => $seatNumbersArray, // if you want to use as array in Blade
         ]);
     }
 }
-

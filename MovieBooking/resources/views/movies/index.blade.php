@@ -134,8 +134,6 @@
         <h2><strong><u>Developed By:</u></strong></h2><br>
         <p><b>
             1. Arjun Kanani<br><br>
-            2. Arydeepsinh Jadeja<br><br>
-            3. Fenil Galani
         </b></p>
     </div>
 
